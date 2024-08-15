@@ -14,9 +14,14 @@ target_sources(imgui PRIVATE
     "imgui_widgets.cpp"
     "backends/imgui_impl_glfw.cpp"
     "backends/imgui_impl_vulkan.cpp"
+    "misc/cpp/imgui_stdlib.cpp"
 )
 
-target_include_directories(imgui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(imgui PUBLIC 
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/backends"
+    "${CMAKE_CURRENT_SOURCE_DIR}/misc/cpp"    
+)
 
 # Link against the external libraries required by the backends
 # Note: The glfw and Vulkan::Vulkan targets must be defined in the parent project or globally.
