@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 project(imgui)
 
 add_library(imgui STATIC)
+add_library(imgui::imgui ALIAS imgui)
 
 target_sources(imgui PRIVATE
     "imgui.cpp"
@@ -23,10 +24,17 @@ target_include_directories(imgui PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/misc/cpp"    
 )
 
-# Link against the external libraries required by the backends
-# Note: The glfw and Vulkan::Vulkan targets must be defined in the parent project or globally.
-# Ensure that glfw and Vulkan are found via find_package() or add_subdirectory() in the parent project.
-target_link_libraries(imgui PUBLIC 
-    glfw
-    Vulkan::Vulkan 
-)
+target_link_libraries(imgui PUBLIC glfw)
+
+option(IMGUI_USE_VOLK "Use Volk instead of linking against Vulkan loader" OFF)
+if(IMGUI_USE_VOLK)
+    message(STATUS "ImGui: building with Volk backend")
+    target_link_libraries(imgui PUBLIC volk::volk_headers)
+    target_compile_definitions(imgui PRIVATE
+        IMGUI_IMPL_VULKAN_USE_VOLK
+        IMGUI_IMPL_VULKAN_NO_PROTOTYPES
+    )
+else()
+    message(STATUS "ImGui: building with standard Vulkan loader")
+    target_link_libraries(imgui PUBLIC Vulkan::Vulkan)
+endif()
